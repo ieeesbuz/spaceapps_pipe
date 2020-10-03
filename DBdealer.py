@@ -25,14 +25,14 @@ def connect(params_dic):
         sys.exit(1) 
     return conn
 
-def postgresql_to_dataframe(conn, select_query, column_names):
+def postgresql_to_dataframe(conn, select_query, column_names=None):
     """
     Tranform a SELECT query into a pandas dataframe
     """
     cursor = conn.cursor()
     try:
         cursor.execute(select_query)
-    except (Exception, psycopg2.DatabaseError) as error:
+    except (Exception, p2.DatabaseError) as error:
         print("Error: %s" % error)
         cursor.close()
         return 1
@@ -42,7 +42,11 @@ def postgresql_to_dataframe(conn, select_query, column_names):
     cursor.close()
     
     # We just need to turn it into a pandas dataframe
-    df = pd.DataFrame(tupples, columns=column_names)
+    #df = pd.DataFrame(tupples, columns=column_names)
+    if column_names is not None:
+    	df = pd.DataFrame(tupples,column_names)
+    else:
+    	df = pd.DataFrame(tupples)
     return df
 
 
@@ -50,20 +54,47 @@ def postgresql_to_dataframe(conn, select_query, column_names):
 if __name__=='__main__':
 	# Connect to the database
 	conn = connect(param_dic)
-	column_names = ["id", "ciudades", "co2"]
-	# Execute the "SELECT *" query
-	df = postgresql_to_dataframe(conn, "select * from prueba", column_names)
-	data = df.to_numpy()
-	print(data)
+	column_df = postgresql_to_dataframe(conn,"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = nasa ORDER BY ORDINAL_POSITION")
+	column_names = column_df.to_numpy()
+	print(column_names)
+	
 
-	b=data[:,2]
-	b.sort()
-	b=b[::-1]
-	ranking=b[0:4]
-	print(ranking)
-	c=np.sort(data, axis=2)
+	# Execute the "SELECT *" query
+	#df = postgresql_to_dataframe(conn, "select * from prueba", column_names)
+	df = postgresql_to_dataframe(conn, "SELECT * FROM public.nasa ORDER BY ratio DESC LIMIT 10", column_names)
+	#df = postgresql_to_dataframe(conn, "select * from nasa", column_names)
+	data = df.to_numpy().T
+	print(data)
+	for i in range(len(data[1])):
+		data[1][i] = str(data[1][i]).lower()
+	data = data.T
+
+	# b=data[:,2]
+	# b.sort(reverse)
+	# b=b[::-1]
+	# ranking=b[0:4]
+	# print(ranking)
+
+	c=data[data[:,2].argsort()]
+	c=c[::-1]
 	# newarray=numpy.append(ranking, c, axis = 1)
 	print(c)
+
+
+	#palaba es la entrada de la función buscador de co2
+	palabra='pasadena'
+	#x = np.where(data[:,1]==palabra)
+	
+	cities = c.T[1]
+	print(cities)
+	co2 = c.T[2]
+	print(co2)
+	ranking = np.linspace(1, len(c), num=len(c), endpoint=True).astype('uint8')
+	print(ranking)
+
+	mydict = dict(zip(cities, zip(co2,ranking)))
+	print(mydict)
+	print(mydict.get(palabra))
 
 
 
