@@ -54,10 +54,6 @@ def postgresql_to_dataframe(conn, select_query, column_names=None):
 if __name__=='__main__':
 	# Connect to the database
 	conn = connect(param_dic)
-	column_df = postgresql_to_dataframe(conn,"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = nasa ORDER BY ORDINAL_POSITION")
-	column_names = column_df.to_numpy()
-	print(column_names)
-	
 
 	# Execute the "SELECT *" query
 	#df = postgresql_to_dataframe(conn, "select * from prueba", column_names)

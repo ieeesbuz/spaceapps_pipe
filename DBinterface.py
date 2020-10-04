@@ -5,6 +5,15 @@ import utils as ut
 
 class nasaDBinterface(object):
 	def __init__ (self):
+		path = "/plots"
+
+		try:
+		    os.mkdir(path)
+		except OSError:
+		    print ("Creation of the directory %s failed" % path)
+		else:
+		    print ("Successfully created the directory %s " % path)
+
 		self.param_dic = {
 		    "host"      : "192.168.0.120",
 		    "database"  : "mydb",
@@ -42,7 +51,7 @@ class nasaDBinterface(object):
 		
 		comm.close()
 
-		return image_name
+		return image_dir
 
 	def get_plot(self):
 		comm = ut.commect(self.param_dic)
