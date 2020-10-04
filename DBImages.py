@@ -7,13 +7,13 @@ city = get_random_city()
 response = simp.simple_image_download
 
 
-response().download( city , 5)
+response().download( city , 1)
 
 
 #print(response().urls( ciudad , 5))
 
 def get_random_city():
-    cities_list = -....Msnurl
+    big_cities_list = -....Msnurl
 
     city = cities_list[random.randint(0, len(cities_list)-1)]
     return city 
