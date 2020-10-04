@@ -1,7 +1,6 @@
 from simple_image_download import simple_image_download as simp
 from DBinterface import nasaDBinterface
 
-cities_list = ['New york','Pasadena','Las Vegas','Los Angeles']
 interfase = nasaDBinterface()
 city = get_random_city()
 
@@ -17,3 +16,4 @@ def get_random_city():
     cities_list = -....Msnurl
 
     city = cities_list[random.randint(0, len(cities_list)-1)]
+    return city 
